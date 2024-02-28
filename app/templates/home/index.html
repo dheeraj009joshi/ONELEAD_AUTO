@@ -1,0 +1,23 @@
+{% extends "layouts/base.html" %} {% block title %} Dashboard {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+
+<div class="container-fluid py-4">
+  
+  {% include "includes/top-row.html" %}
+  </div>
+
+
+   {% include 'includes/footer.html' %}
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+{% endblock javascripts %}

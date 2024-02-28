@@ -1,0 +1,27 @@
+<!-- Your HTML file -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ... (your head content) ... -->
+</head>
+<body>
+
+<!-- ... (your body content) ... -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    // Handle received messages
+    socket.on('selenium_status', function (msg) {
+        console.log('Received message:', msg);
+        // Update your UI or perform any actions based on the received message
+    });
+
+    // ... (rest of your JavaScript code) ...
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,186 @@
+
+  {% if message and  message.status=="success"  %}
+
+
+                <!-- Success Alert Component -->
+                <div id="pop" style="display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 10px 20px;
+                margin-bottom: 20px;
+                align-items:center;
+                color: white;
+                border-radius:10px;
+                background-color: lightgreen;">
+                    <div class="card-content white-text">
+                        
+                        <p style="margin:0px" >Success!  {{ message.message }}</p>
+                    </div>
+                    <div class="card-action">
+                        <a href="#" class="white-text" id="closeBtn">X</a>
+                    </div>
+                </div>
+ 
+  {% elif message and message.status=="running" %}
+   <!-- Success Alert Component -->
+   <div id="pop" style="display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   padding: 10px 20px;
+   margin-bottom: 20px;
+   align-items:center;
+   color: white;
+   border-radius:10px;
+   background-color: lightgreen;">
+       <div class="card-content white-text">
+           <p style="margin:0px">Success!  {{ message.message }}</p>
+       </div>
+       <div class="card-action">
+           <a href="#" class="white-text" id="closeBtn">X</a>
+       </div>
+   </div>
+  {% elif message and message.status=="fail" %}
+   <!-- Success Alert Component -->
+   <div id="pop" style="display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px 20px;
+    align-items:center;
+    margin-bottom: 20px;
+    color: white;
+    border-radius:10px
+    background-color: red;">
+       <div class="card-content white-text">
+          
+           <p style="margin:0px">Success!  {{ message.message }}</p>
+       </div>
+       <div class="card-action">
+           <a href="#" class="white-text" id="closeBtn">X</a>
+       </div>
+   </div>
+    
+  {% endif %}
+  
+  
+<div class="row">
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-header p-3 pt-2">
+          <div
+            class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute"
+          >
+            <i class="material-icons opacity-10">weekend</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize">Total Leads</p>
+            <h4 class="mb-0" id="total-leads"></h4>
+          </div>
+        </div>
+        <hr class="dark horizontal my-0" />
+        <div class="card-footer p-3">
+          <p class="mb-0">
+            <span class="text-success text-sm font-weight-bolder">+55% </span
+            >than lask week
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-header p-3 pt-2">
+          <div
+            class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute"
+          >
+            <i class="material-icons opacity-10">person</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize">Today's Emails</p>
+            <h4 class="mb-0" id="today-emails"></h4>
+          </div>
+        </div>
+        <hr class="dark horizontal my-0" />
+        <div class="card-footer p-3">
+          <p class="mb-0">
+            <span class="text-success text-sm font-weight-bolder">+3% </span
+            >than lask month
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-header p-3 pt-2">
+          <div
+            class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute"
+          >
+            <i class="material-icons opacity-10">person</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize">Today's Text</p>
+            <h4 class="mb-0" id="today-text"></h4>
+          </div>
+        </div>
+        <hr class="dark horizontal my-0" />
+        <div class="card-footer p-3">
+          <p class="mb-0">
+            <span class="text-danger text-sm font-weight-bolder">-2%</span> than
+            yesterday
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6">
+      <div class="card">
+        <div class="card-header p-3 pt-2">
+          <div
+            class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute"
+          >
+            <i class="material-icons opacity-10">weekend</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize">Your Sales</p>
+            <h4 class="mb-0" id="your-sale">$103,430</h4>
+          </div>
+        </div>
+        <hr class="dark horizontal my-0" />
+        <div class="card-footer p-3">
+          <p class="mb-0">
+            <span class="text-success text-sm font-weight-bolder">+5% </span
+            >than yesterday
+          </p>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
+<script type="text/javascript">
+var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+var intervalID = setInterval(update_values,1000);
+
+  function update_values() {
+        $.getJSON($SCRIPT_ROOT + '/get_user_details',
+               
+      function(data) {
+        $('#total-leads').text(data.total_leads);
+        $('#today-emails').text(data.todays_emails);
+        $('#today-text').text(data.todays_texts);
+        console.log(data);
+      });
+      
+    };
+  
+    function stopTextColor() {
+      clearInterval(intervalID);
+    }
+</script>
+<!-- Add JavaScript to close the alert on button click -->
+<script>
+  document.getElementById('closeBtn').addEventListener('click', function() {
+      var alert = document.getElementById('pop');
+      alert.style.display = 'none';
+  });
+</script>

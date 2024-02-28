@@ -1,0 +1,294 @@
+{% extends "layouts/base.html" %} {% block title %} Dashboard {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+    {# Add content specific to auto-text.html #}
+<style>
+  #csvPreview {
+    max-width: 100%;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    max-height: 300px; /* Set a max height for vertical scrolling */
+  }
+
+  #csvPreview table {
+    width: auto; /* Allow the table to be as wide as its content */
+    table-layout: auto; /* Adjust table layout */
+  }
+
+  #csvPreview th, #csvPreview td {
+    padding: 8px; /* Adjust cell padding for a more compact appearance */
+    text-align: left; /* Align text to the left */
+  }
+
+  #csvLoader {
+    display: none;
+  }
+
+  #formContainer {
+    max-width: 500px;
+    margin: auto;
+  }
+
+  #csvFile {
+    display: none; /* Hide the default file input */
+  }
+
+  #customFileBtn {
+    cursor: pointer;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #333;
+  }
+
+  #textToSend {
+    resize: vertical;
+    min-height: 150px;
+    width: 300px; /* Set the width to 50% of the screen size */
+    max-width: 100%; /* Ensure it doesn't exceed 100% of the screen size */
+  }
+  #selectedFileName {
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  #formContainer {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  #customFileBtn:hover {
+    background-color: #0056b3; /* Darker color on hover */
+    color: #fff;
+  }
+  
+  #textToSend {
+    resize: vertical;
+    min-height: 150px;
+    width: 100%; /* Set the width to 100% of the container */
+    padding: 10px; /* Add padding for better appearance */
+  }
+  
+  #csvLoader {
+    display: none;
+    margin-top: 20px;
+    text-align: center; /* Center the loader text */
+  }
+  
+  #csvLoader .spinner-border {
+    color: #007bff; /* Set spinner color */
+  }
+  
+  #selectedFileName {
+    margin-top: 10px;
+    font-style: italic;
+    color: #333; /* Set color for the selected file text */
+  }
+  
+</style>
+
+
+</style>
+</style>
+<div class="container-fluid py-4">
+  
+  {% if message and  message.status=="success"  %}
+
+
+                <!-- Success Alert Component -->
+                <div id="pop" style="display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 10px 20px;
+                margin-bottom: 20px;
+                align-items:center;
+                color: white;
+                border-radius:10px;
+                background-color: lightgreen;">
+                    <div class="card-content white-text">
+                        
+                        <p style="margin:0px" >Success!  {{ message.message }}</p>
+                    </div>
+                    <div class="card-action">
+                        <a href="#" class="white-text" id="closeBtn">X</a>
+                    </div>
+                </div>
+ 
+  {% elif message and message.status=="running" %}
+   <!-- Success Alert Component -->
+   <div id="pop" style="display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   padding: 10px 20px;
+   margin-bottom: 20px;
+   align-items:center;
+   color: white;
+   border-radius:10px;
+   background-color: lightgreen;">
+       <div class="card-content white-text">
+           <p style="margin:0px">  {{ message.message }}</p>
+       </div>
+       <div class="card-action">
+           <a href="#" class="white-text" id="closeBtn">X</a>
+       </div>
+   </div>
+  {% elif message and message.status=="fail" %}
+   <!-- Success Alert Component -->
+   <div id="pop" style="display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px 20px;
+    align-items:center;
+    margin-bottom: 20px;
+    color: white;
+    border-radius:10px
+    background-color: red;">
+       <div class="card-content white-text">
+          
+           <p style="margin:0px">  {{ message.message }}</p>
+       </div>
+       <div class="card-action">
+           <a href="#" class="white-text" id="closeBtn">X</a>
+       </div>
+   </div>
+    
+  {% endif %}
+  <div class="row mt-4">
+    
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div
+            class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3"
+          >
+            <h6 class="text-white text-capitalize ps-3">Text Automation</h6>
+          </div>
+        </div>
+         <!-- Form -->
+    <div class="card-body mt-4" id="formContainer">
+      <form action="{{url_for('general_bp.AUTO_TEXT')}}" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="textToSend" class="form-label">Text to Send:</label>
+          <textarea class="form-control" id="textToSend" name="textToSend" rows="6" required></textarea>
+        </div>
+
+        <!-- Custom file input button -->
+        <div class="mb-3">
+          <label for="csvFile" class="form-label">Upload CSV File:</label>
+          <div id="customFileBtn">Choose File</div>
+          <div id="selectedFileName"></div>
+          <input type="file" class="form-control" id="csvFile" name="csvFile" accept=".csv" required>
+        </div>
+        <!-- End Custom file input button -->
+
+        <!-- Loader -->
+        <div id="csvLoader" class="text-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p>Loading CSV Preview...</p>
+        </div>
+        <!-- End Loader -->
+        <input type="hidden" name="action" value="Text">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+    <!-- End Form -->
+    <!-- Total Rows -->
+<div class="card-body mt-4">
+  <h5>Total Rows:</h5>
+  <div id="totalRows"></div>
+</div>
+<!-- End Total Rows -->
+        <!-- CSV Preview -->
+        <div class="card-body mt-4">
+          <h5>CSV Preview:</h5>
+          <div id="csvPreview"></div>
+        </div>
+        <!-- End CSV Preview -->
+      </div>
+      
+    </div>
+  </div>
+  {% include 'includes/footer.html' %}
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    $('#customFileBtn').click(function() {
+      // Trigger click on the hidden file input
+      $('#csvFile').trigger('click');
+    });
+
+    $('#csvFile').change(function() {
+      // Show loader
+      $('#csvLoader').show();
+
+      // Display selected file name
+      const fileName = $(this).val().split('\\').pop();
+      $('#selectedFileName').text('Selected File: ' + fileName);
+
+      // Clear existing preview
+      $('#csvPreview').empty();
+
+      // Read the contents of the CSV file
+      const fileInput = document.getElementById('csvFile');
+      const file = fileInput.files[0];
+
+      if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+          const csvData = e.target.result;
+          const rows = csvData.split('\n');
+
+          // Create a table for preview
+          const table = $('<table class="table"></table>');
+
+          // Add header row
+          const headerRow = $('<tr></tr>');
+          const headers = rows[0].split(',');
+          headers.forEach(header => {
+            headerRow.append($('<th scope="col">' + header + '</th>'));
+          });
+          table.append($('<thead></thead>').append(headerRow));
+
+          // Add data rows
+          for (let i = 1; i < rows.length; i++) {
+            const dataRow = $('<tr></tr>');
+            const rowData = rows[i].split(',');
+            rowData.forEach(data => {
+              dataRow.append($('<td>' + data + '</td>'));
+            });
+            table.append($('<tbody></tbody>').append(dataRow));
+          }
+
+          // Append the table to the preview container
+          $('#csvPreview').append(table);
+
+          // Display total number of rows
+          $('#totalRows').text('Total Rows: ' + (rows.length - 1));
+
+          // Hide loader after preview is ready
+          $('#csvLoader').hide();
+        };
+
+        reader.readAsText(file);
+      }
+    });
+  });
+</script>
+
+{% endblock javascripts %}
